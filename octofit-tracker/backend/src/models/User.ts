@@ -1,35 +1,57 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose'
 
 export interface IUser extends Document {
-  username: string;
-  email: string;
-  password: string;
-  createdAt: Date;
-  updatedAt: Date;
+  name: string
+  email: string
+  age?: number
+  weight?: number
+  height?: number
+  goal?: string
+  createdAt: Date
+  updatedAt: Date
 }
 
-const UserSchema: Schema = new Schema<IUser>(
+const userSchema = new Schema<IUser>(
   {
-    username: {
+    name: {
       type: String,
-      required: true,
-      unique: true,
-      trim: true
+      required: [true, 'Please provide a name'],
+      trim: true,
+      maxlength: [50, 'Name cannot be more than 50 characters']
     },
     email: {
       type: String,
-      required: true,
+      required: [true, 'Please provide an email'],
       unique: true,
-      lowercase: true
+      match: [
+        /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+        'Please provide a valid email'
+      ]
     },
-    password: {
+    age: {
+      type: Number,
+      min: 1,
+      max: 150
+    },
+    weight: {
+      type: Number,
+      min: 20,
+      max: 500
+    },
+    height: {
+      type: Number,
+      min: 50,
+      max: 300
+    },
+    goal: {
       type: String,
-      required: true
+      enum: ['weight_loss', 'muscle_gain', 'endurance', 'general_fitness'],
+      default: 'general_fitness'
     }
   },
   {
     timestamps: true
   }
-);
+)
 
-export default mongoose.model<IUser>('User', UserSchema);
+export default mongoose.model<IUser>('User', userSchema)

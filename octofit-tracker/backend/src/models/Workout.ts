@@ -1,53 +1,64 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose'
 
 export interface IWorkout extends Document {
-  userId: mongoose.Types.ObjectId;
-  title: string;
-  description: string;
-  duration: number; // in minutes
-  intensity: 'low' | 'medium' | 'high';
-  caloriesBurned: number;
-  date: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  userId: mongoose.Types.ObjectId
+  name: string
+  type: string
+  duration: number
+  caloriesBurned: number
+  intensity: string
+  date: Date
+  notes?: string
+  createdAt: Date
+  updatedAt: Date
 }
 
-const WorkoutSchema: Schema = new Schema<IWorkout>(
+const workoutSchema = new Schema<IWorkout>(
   {
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: [true, 'User ID is required']
     },
-    title: {
+    name: {
       type: String,
-      required: true
+      required: [true, 'Please provide a workout name'],
+      trim: true,
+      maxlength: [100, 'Workout name cannot be more than 100 characters']
     },
-    description: {
+    type: {
       type: String,
-      default: ''
+      required: [true, 'Please provide a workout type'],
+      enum: ['cardio', 'strength', 'flexibility', 'sports', 'other']
     },
     duration: {
       type: Number,
-      required: true
-    },
-    intensity: {
-      type: String,
-      enum: ['low', 'medium', 'high'],
-      default: 'medium'
+      required: [true, 'Please provide workout duration in minutes'],
+      min: 1,
+      max: 600
     },
     caloriesBurned: {
       type: Number,
-      default: 0
+      required: [true, 'Please provide calories burned'],
+      min: 0
+    },
+    intensity: {
+      type: String,
+      required: [true, 'Please provide intensity level'],
+      enum: ['low', 'moderate', 'high']
     },
     date: {
       type: Date,
       default: Date.now
+    },
+    notes: {
+      type: String,
+      maxlength: [500, 'Notes cannot be more than 500 characters']
     }
   },
   {
     timestamps: true
   }
-);
+)
 
-export default mongoose.model<IWorkout>('Workout', WorkoutSchema);
+export default mongoose.model<IWorkout>('Workout', workoutSchema)
