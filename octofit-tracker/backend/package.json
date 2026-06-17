@@ -8,6 +8,8 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "seed": "tsx src/scripts/seed.ts",
+    "reset": "tsx src/scripts/reset.ts",
     "lint": "eslint src"
   },
   "keywords": [
